@@ -80,7 +80,7 @@ template(
 template(
   '{greet}! My name is {name}.',
   { greet: 'Hello' },
-  (key) => `[${key}]`
+  key => `[${key}]`
 )
 // 'Hello! My name is [name].'
 ```
@@ -116,10 +116,10 @@ const code = unindent`
 // 'if (a) {\n  b()\n}'
 
 const multiline = unindent`
-  
+
   First line
   Second line
-  
+
 `
 // 'First line\nSecond line'
 ```
@@ -129,7 +129,7 @@ const multiline = unindent`
 ### Path Normalization
 
 ```ts
-import { slash, ensurePrefix, ensureSuffix } from '@setemiojo/utils'
+import { ensurePrefix, ensureSuffix, slash } from '@setemiojo/utils'
 
 function normalizePath(path: string) {
   return ensureSuffix('/', slash(path))
@@ -144,8 +144,8 @@ normalizePath('C:\\Users\\John\\Documents') // 'C:/Users/John/Documents/'
 import { ensurePrefix, ensureSuffix } from '@setemiojo/utils'
 
 function buildUrl(base: string, path: string) {
-  return ensureSuffix('/', ensurePrefix('https://', base)) + 
-         ensurePrefix('/', path)
+  return ensureSuffix('/', ensurePrefix('https://', base))
+    + ensurePrefix('/', path)
 }
 
 buildUrl('example.com', 'api/users') // 'https://example.com/api/users'
@@ -156,12 +156,12 @@ buildUrl('example.com', 'api/users') // 'https://example.com/api/users'
 ```ts
 import { template } from '@setemiojo/utils'
 
-function createEmailTemplate(user: { name: string; email: string }) {
+function createEmailTemplate(user: { name: string, email: string }) {
   return template(`
     Dear {name},
-    
+
     Thank you for signing up with email {email}.
-    
+
     Best regards,
     The Team
   `, user)

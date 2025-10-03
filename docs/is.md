@@ -75,7 +75,7 @@ import { isNumber } from '@setemiojo/utils'
 
 isNumber(42) // true
 isNumber(3.14) // true
-isNumber(NaN) // true
+isNumber(Number.NaN) // true
 isNumber(Infinity) // true
 isNumber('42') // false
 isNumber(null) // false
@@ -103,7 +103,7 @@ Check if a value is a function
 import { isFunction } from '@setemiojo/utils'
 
 isFunction(() => {}) // true
-isFunction(function() {}) // true
+isFunction(() => {}) // true
 isFunction(class {}) // true
 isFunction('function') // false
 isFunction(null) // false
@@ -155,6 +155,7 @@ Check if a value is a RegExp
 import { isRegExp } from '@setemiojo/utils'
 
 isRegExp(/test/) // true
+// eslint-disable-next-line prefer-regex-literals
 isRegExp(new RegExp('test')) // true
 isRegExp('test') // false
 isRegExp(null) // false
@@ -201,7 +202,7 @@ isBrowser // true (in browser), false (in Node.js)
 ### API Response Validation
 
 ```ts
-import { isString, isNumber, isObject } from '@setemiojo/utils'
+import { isNumber, isObject, isString } from '@setemiojo/utils'
 
 interface User {
   id: number
@@ -210,12 +211,13 @@ interface User {
 }
 
 function validateUser(data: any): User | null {
-  if (!isObject(data)) return null
-  
+  if (!isObject(data))
+    return null
+
   if (!isNumber(data.id) || !isString(data.name) || !isString(data.email)) {
     return null
   }
-  
+
   return {
     id: data.id,
     name: data.name,
@@ -227,23 +229,23 @@ function validateUser(data: any): User | null {
 ### Form Validation
 
 ```ts
-import { isString, isNumber, isDef } from '@setemiojo/utils'
+import { isDef, isNumber, isString } from '@setemiojo/utils'
 
 function validateFormData(data: Record<string, any>) {
   const errors: string[] = []
-  
+
   if (!isString(data.name) || data.name.trim() === '') {
     errors.push('Name is required')
   }
-  
+
   if (!isString(data.email) || !data.email.includes('@')) {
     errors.push('Valid email is required')
   }
-  
+
   if (isDef(data.age) && (!isNumber(data.age) || data.age < 0)) {
     errors.push('Age must be a positive number')
   }
-  
+
   return {
     isValid: errors.length === 0,
     errors
@@ -254,21 +256,22 @@ function validateFormData(data: Record<string, any>) {
 ### Type-Safe Property Access
 
 ```ts
-import { isObject, isString, isNumber } from '@setemiojo/utils'
+import { isNumber, isObject, isString } from '@setemiojo/utils'
 
 function getNestedProperty(obj: any, path: string) {
-  if (!isObject(obj)) return undefined
-  
+  if (!isObject(obj))
+    return undefined
+
   const keys = path.split('.')
   let current = obj
-  
+
   for (const key of keys) {
     if (!isObject(current) || !(key in current)) {
       return undefined
     }
     current = current[key]
   }
-  
+
   return current
 }
 
@@ -296,11 +299,13 @@ function getGlobalObject() {
 }
 
 function isInIframe() {
-  if (!isBrowser) return false
-  
+  if (!isBrowser)
+    return false
+
   try {
     return isWindow(window) && window.self !== window.top
-  } catch {
+  }
+  catch {
     return true
   }
 }
@@ -309,25 +314,25 @@ function isInIframe() {
 ### Data Processing Pipeline
 
 ```ts
-import { isString, isNumber, isObject, isPrimitive } from '@setemiojo/utils'
+import { isNumber, isObject, isPrimitive, isString } from '@setemiojo/utils'
 
 function processData(data: any) {
   if (isPrimitive(data)) {
     return { type: 'primitive', value: data }
   }
-  
+
   if (isObject(data)) {
     return { type: 'object', keys: Object.keys(data) }
   }
-  
+
   if (isString(data)) {
     return { type: 'string', length: data.length }
   }
-  
+
   if (isNumber(data)) {
     return { type: 'number', value: data }
   }
-  
+
   return { type: 'unknown', value: data }
 }
 ```

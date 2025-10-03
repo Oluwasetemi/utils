@@ -224,7 +224,7 @@ const finalConfig = deepMerge(defaultConfig, userConfig)
 ### Safe Property Access
 
 ```ts
-import { isKeyOf, hasOwnProperty } from '@setemiojo/utils'
+import { hasOwnProperty, isKeyOf } from '@setemiojo/utils'
 
 function getProperty<T>(obj: T, key: string) {
   if (isKeyOf(obj, key) && hasOwnProperty(obj, key)) {
@@ -241,7 +241,7 @@ getProperty(user, 'email') // undefined
 ### Object Transformation Pipeline
 
 ```ts
-import { objectMap, objectPick, clearUndefined } from '@setemiojo/utils'
+import { clearUndefined, objectMap, objectPick } from '@setemiojo/utils'
 
 function transformUserData(rawData: any) {
   return clearUndefined(

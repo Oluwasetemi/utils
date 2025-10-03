@@ -53,7 +53,7 @@ import { tap } from '@setemiojo/utils'
 
 // Builder pattern
 function createUser(name: string) {
-  return tap(new User(), user => {
+  return tap(new User(), (user) => {
     user.name = name
     user.createdAt = new Date()
     user.isActive = true
@@ -61,14 +61,14 @@ function createUser(name: string) {
 }
 
 // Side effects with return value preservation
-const result = tap(computeValue(), value => {
+const result = tap(computeValue(), (value) => {
   console.log('Computed value:', value)
   trackMetric('computation', value)
 })
 // result contains the computed value, side effects are executed
 
 // Method chaining
-const processed = tap(rawData, data => {
+const processed = tap(rawData, (data) => {
   validateData(data)
   logData(data)
 })
@@ -155,16 +155,16 @@ function expensiveOperation() {
 
 // Only compute if needed
 function processData(shouldCompute: boolean) {
-  const data = shouldCompute 
+  const data = shouldCompute
     ? invoke(expensiveOperation)
     : null
-  
+
   return data
 }
 
 // Expensive operation only runs when shouldCompute is true
 const result1 = processData(false) // null, no computation
-const result2 = processData(true)  // computation runs
+const result2 = processData(true) // computation runs
 ```
 
 ### Debugging and Logging
@@ -173,13 +173,13 @@ const result2 = processData(true)  // computation runs
 import { tap } from '@setemiojo/utils'
 
 function processUserData(user: User) {
-  return tap(user, u => {
+  return tap(user, (u) => {
     console.log('Processing user:', u.id)
     console.log('User data:', JSON.stringify(u, null, 2))
   })
     .then(validateUser)
     .then(transformUser)
-    .then(tap(u => {
+    .then(tap((u) => {
       console.log('Final user data:', u)
       analytics.track('user_processed', { userId: u.id })
     }))

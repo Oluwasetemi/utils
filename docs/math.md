@@ -100,13 +100,13 @@ const currentValue = animateWithEasing(startValue, endValue, progress)
 ### Color Manipulation
 
 ```ts
-import { remap, clamp } from '@setemiojo/utils'
+import { clamp, remap } from '@setemiojo/utils'
 
 function rgbToHsl(r: number, g: number, b: number) {
   const h = remap(r, 0, 255, 0, 360)
   const s = remap(g, 0, 255, 0, 100)
   const l = remap(b, 0, 255, 0, 100)
-  
+
   return { h: clamp(h, 0, 360), s: clamp(s, 0, 100), l: clamp(l, 0, 100) }
 }
 
@@ -118,7 +118,7 @@ function normalizeColorComponent(value: number) {
 ### Data Normalization
 
 ```ts
-import { remap, clamp } from '@setemiojo/utils'
+import { clamp, remap } from '@setemiojo/utils'
 
 function normalizeScore(score: number, minScore: number, maxScore: number) {
   return clamp(remap(score, minScore, maxScore, 0, 1), 0, 1)
@@ -133,7 +133,7 @@ const testScores = [65, 78, 92, 45, 88]
 const minScore = Math.min(...testScores) // 45
 const maxScore = Math.max(...testScores) // 92
 
-const normalizedScores = testScores.map(score => 
+const normalizedScores = testScores.map(score =>
   normalizeScore(score, minScore, maxScore)
 )
 // [0.43, 0.70, 1.0, 0.0, 0.91]
@@ -162,7 +162,7 @@ function ProgressBar({ current, total, startValue = 0, endValue = 100 }) {
   const progress = calculateProgress(current, total)
   const smoothProgressValue = smoothProgress(progress)
   const displayValue = interpolateProgress(smoothProgressValue, startValue, endValue)
-  
+
   return { progress: smoothProgressValue, displayValue }
 }
 ```
@@ -170,7 +170,7 @@ function ProgressBar({ current, total, startValue = 0, endValue = 100 }) {
 ### Statistical Operations
 
 ```ts
-import { sum, clamp } from '@setemiojo/utils'
+import { clamp, sum } from '@setemiojo/utils'
 
 function calculateAverage(numbers: number[]) {
   return sum(...numbers) / numbers.length

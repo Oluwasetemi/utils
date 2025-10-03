@@ -24,11 +24,11 @@ const now2 = Date.now() // Same result
 ```ts
 import { timestamp } from '@setemiojo/utils'
 
-function measurePerformance<T>(fn: () => T): { result: T; duration: number } {
+function measurePerformance<T>(fn: () => T): { result: T, duration: number } {
   const start = timestamp()
   const result = fn()
   const end = timestamp()
-  
+
   return {
     result,
     duration: end - start
@@ -50,7 +50,7 @@ console.log(`Operation took ${duration}ms`)
 import { timestamp } from '@setemiojo/utils'
 
 class TimedCache<T> {
-  private cache = new Map<string, { value: T; expires: number }>()
+  private cache = new Map<string, { value: T, expires: number }>()
   private ttl: number
 
   constructor(ttlMs: number) {
@@ -66,14 +66,15 @@ class TimedCache<T> {
 
   get(key: string): T | undefined {
     const item = this.cache.get(key)
-    
-    if (!item) return undefined
-    
+
+    if (!item)
+      return undefined
+
     if (timestamp() > item.expires) {
       this.cache.delete(key)
       return undefined
     }
-    
+
     return item.value
   }
 
@@ -100,27 +101,27 @@ setTimeout(() => {
 import { timestamp } from '@setemiojo/utils'
 
 class RequestDeduplicator {
-  private requests = new Map<string, { promise: Promise<any>; timestamp: number }>()
+  private requests = new Map<string, { promise: Promise<any>, timestamp: number }>()
   private dedupeWindow = 1000 // 1 second
 
   async request<T>(key: string, fn: () => Promise<T>): Promise<T> {
     const now = timestamp()
     const existing = this.requests.get(key)
-    
+
     // Return existing request if it's within the dedupe window
     if (existing && (now - existing.timestamp) < this.dedupeWindow) {
       return existing.promise
     }
-    
+
     // Create new request
     const promise = fn()
     this.requests.set(key, { promise, timestamp: now })
-    
+
     // Clean up after completion
     promise.finally(() => {
       this.requests.delete(key)
     })
-    
+
     return promise
   }
 }
@@ -150,14 +151,14 @@ class RateLimiter {
 
   canMakeRequest(): boolean {
     const now = timestamp()
-    
+
     // Remove old requests outside the window
     this.requests = this.requests.filter(time => now - time < this.windowMs)
-    
+
     if (this.requests.length >= this.maxRequests) {
       return false
     }
-    
+
     this.requests.push(now)
     return true
   }
@@ -166,10 +167,10 @@ class RateLimiter {
     if (this.requests.length < this.maxRequests) {
       return 0
     }
-    
+
     const oldestRequest = Math.min(...this.requests)
     const timeUntilOldestExpires = this.windowMs - (timestamp() - oldestRequest)
-    
+
     return Math.max(0, timeUntilOldestExpires)
   }
 }
@@ -180,7 +181,8 @@ const limiter = new RateLimiter(10, 60000) // 10 requests per minute
 if (limiter.canMakeRequest()) {
   // Make the request
   makeApiCall()
-} else {
+}
+else {
   const waitTime = limiter.getTimeUntilNextRequest()
   console.log(`Rate limited. Wait ${waitTime}ms before next request`)
 }
@@ -206,7 +208,7 @@ class SessionManager {
   createSession(userId: string): string {
     const sessionId = generateSessionId()
     const now = timestamp()
-    
+
     const session: Session = {
       id: sessionId,
       userId,
@@ -214,33 +216,34 @@ class SessionManager {
       lastActivity: now,
       expiresAt: now + this.sessionTimeout
     }
-    
+
     this.sessions.set(sessionId, session)
     return sessionId
   }
 
   validateSession(sessionId: string): boolean {
     const session = this.sessions.get(sessionId)
-    
-    if (!session) return false
-    
+
+    if (!session)
+      return false
+
     const now = timestamp()
-    
+
     if (now > session.expiresAt) {
       this.sessions.delete(sessionId)
       return false
     }
-    
+
     // Update last activity
     session.lastActivity = now
     session.expiresAt = now + this.sessionTimeout
-    
+
     return true
   }
 
   cleanupExpiredSessions() {
     const now = timestamp()
-    
+
     for (const [sessionId, session] of this.sessions) {
       if (now > session.expiresAt) {
         this.sessions.delete(sessionId)

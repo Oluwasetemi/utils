@@ -20,7 +20,7 @@ function processUser(user: any) {
   assert(user && typeof user === 'object', 'User must be an object')
   assert(typeof user.name === 'string', 'User name must be a string')
   assert(typeof user.age === 'number', 'User age must be a number')
-  
+
   return {
     name: user.name,
     age: user.age
@@ -30,7 +30,8 @@ function processUser(user: any) {
 // Usage
 try {
   const result = divide(10, 0) // Throws: "Division by zero is not allowed"
-} catch (error) {
+}
+catch (error) {
   console.error(error.message)
 }
 ```
@@ -116,7 +117,7 @@ function processApiResponse(response: any) {
   validateInput(response, 'object')
   validateInput(response.data, 'array')
   validateInput(response.status, 'number')
-  
+
   return response.data
 }
 ```
@@ -129,11 +130,11 @@ import { assert, getTypeName } from '@setemiojo/utils'
 function getProperty<T>(obj: any, key: string, expectedType: string): T {
   assert(getTypeName(obj) === 'object', 'First argument must be an object')
   assert(key in obj, `Property '${key}' does not exist`)
-  
+
   const value = obj[key]
   const actualType = getTypeName(value)
   assert(actualType === expectedType, `Property '${key}' must be ${expectedType}, got ${actualType}`)
-  
+
   return value
 }
 
@@ -179,23 +180,23 @@ interface Config {
 
 function validateConfig(config: any): Config {
   assert(getTypeName(config) === 'object', 'Config must be an object')
-  
+
   assert('apiUrl' in config, 'Config must have apiUrl property')
   assert(getTypeName(config.apiUrl) === 'string', 'apiUrl must be a string')
   assert(config.apiUrl.startsWith('http'), 'apiUrl must be a valid URL')
-  
+
   assert('timeout' in config, 'Config must have timeout property')
   assert(getTypeName(config.timeout) === 'number', 'timeout must be a number')
   assert(config.timeout > 0, 'timeout must be positive')
-  
+
   assert('retries' in config, 'Config must have retries property')
   assert(getTypeName(config.retries) === 'number', 'retries must be a number')
   assert(Number.isInteger(config.retries), 'retries must be an integer')
   assert(config.retries >= 0, 'retries must be non-negative')
-  
+
   assert('debug' in config, 'Config must have debug property')
   assert(getTypeName(config.debug) === 'boolean', 'debug must be a boolean')
-  
+
   return config as Config
 }
 ```
@@ -216,7 +217,7 @@ function validateEmail(email: string): string {
   assert(typeof email === 'string', 'Email must be a string')
   assert(email.includes('@'), 'Email must contain @ symbol')
   assert(email.length > 5, 'Email must be at least 5 characters long')
-  
+
   return email.toLowerCase()
 }
 
@@ -225,12 +226,13 @@ function processUserData(data: any) {
     assert(data && typeof data === 'object', 'User data must be an object')
     assert(data.email, 'Email is required')
     assert(data.name, 'Name is required')
-    
+
     return {
       email: validateEmail(data.email),
       name: data.name.trim()
     }
-  } catch (error) {
+  }
+  catch (error) {
     if (error instanceof Error) {
       throw new ValidationError(error.message)
     }

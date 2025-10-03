@@ -95,9 +95,9 @@ import { createControlledPromise } from '@setemiojo/utils'
 const promise = createControlledPromise<string>()
 
 // Set up promise handling
-promise.then(result => {
+promise.then((result) => {
   console.log('Promise resolved with:', result)
-}).catch(error => {
+}).catch((error) => {
   console.log('Promise rejected with:', error)
 })
 
@@ -123,7 +123,8 @@ function createApiRequest(url: string) {
   if (!apiCache.has(url)) {
     apiCache.set(url, createSingletonPromise(async () => {
       const response = await fetch(url)
-      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      if (!response.ok)
+        throw new Error(`HTTP ${response.status}`)
       return response.json()
     }))
   }
@@ -154,11 +155,11 @@ class RateLimiter {
     return this.lock.run(async () => {
       const now = Date.now()
       const timeSinceLastRequest = now - this.lastRequest
-      
+
       if (timeSinceLastRequest < this.minInterval) {
         await sleep(this.minInterval - timeSinceLastRequest)
       }
-      
+
       this.lastRequest = Date.now()
       return fn()
     })
@@ -188,7 +189,8 @@ class AsyncQueue {
         try {
           const result = await task()
           resolve(result)
-        } catch (error) {
+        }
+        catch (error) {
           reject(error)
         }
       })
@@ -197,11 +199,12 @@ class AsyncQueue {
   }
 
   private async process() {
-    if (this.queue.length === 0) return
+    if (this.queue.length === 0)
+      return
 
     const task = this.queue.shift()!
     await this.lock.run(task)
-    
+
     // Process next task
     if (this.queue.length > 0) {
       this.process()
@@ -224,23 +227,23 @@ import { createControlledPromise, sleep } from '@setemiojo/utils'
 
 function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
   const timeoutPromise = createControlledPromise<T>()
-  
+
   // Set up timeout
   const timeoutId = setTimeout(() => {
     timeoutPromise.reject(new Error(`Operation timed out after ${timeoutMs}ms`))
   }, timeoutMs)
-  
+
   // Handle promise completion
   promise
-    .then(result => {
+    .then((result) => {
       clearTimeout(timeoutId)
       timeoutPromise.resolve(result)
     })
-    .catch(error => {
+    .catch((error) => {
       clearTimeout(timeoutId)
       timeoutPromise.reject(error)
     })
-  
+
   return timeoutPromise
 }
 
@@ -261,22 +264,24 @@ async function retry<T>(
   delay: number = 1000
 ): Promise<T> {
   let lastError: Error
-  
+
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       return await fn()
-    } catch (error) {
+    }
+    catch (error) {
       lastError = error as Error
-      
+
       if (attempt === maxAttempts) {
         throw lastError
       }
-      
+
       console.log(`Attempt ${attempt} failed, retrying in ${delay}ms...`)
       await sleep(delay)
     }
   }
-  
+
+  // eslint-disable-next-line no-throw-literal
   throw lastError!
 }
 

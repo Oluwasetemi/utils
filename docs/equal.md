@@ -51,8 +51,8 @@ isDeepEqual(
 import { isDeepEqual } from '@setemiojo/utils'
 
 interface AppState {
-  user: { id: number; name: string }
-  settings: { theme: string; language: string }
+  user: { id: number, name: string }
+  settings: { theme: string, language: string }
   data: any[]
 }
 
@@ -63,7 +63,7 @@ function hasStateChanged(oldState: AppState, newState: AppState): boolean {
 // Usage in React-like component
 class Component {
   private previousState: AppState | null = null
-  
+
   updateState(newState: AppState) {
     if (!this.previousState || hasStateChanged(this.previousState, newState)) {
       this.render(newState)
@@ -79,18 +79,18 @@ class Component {
 import { isDeepEqual } from '@setemiojo/utils'
 
 class CacheManager {
-  private cache = new Map<string, { data: any; params: any }>()
-  
+  private cache = new Map<string, { data: any, params: any }>()
+
   get<T>(key: string, params: any): T | null {
     const cached = this.cache.get(key)
-    
+
     if (cached && isDeepEqual(cached.params, params)) {
       return cached.data
     }
-    
+
     return null
   }
-  
+
   set<T>(key: string, params: any, data: T) {
     this.cache.set(key, { data, params })
   }
@@ -132,11 +132,12 @@ function shouldReloadConfig(oldConfig: Config, newConfig: Config): boolean {
 
 function updateConfig(newConfig: Config) {
   const oldConfig = getCurrentConfig()
-  
+
   if (shouldReloadConfig(oldConfig, newConfig)) {
     console.log('Configuration changed, reloading...')
     applyConfig(newConfig)
-  } else {
+  }
+  else {
     console.log('Configuration unchanged')
   }
 }
@@ -165,12 +166,13 @@ function hasFormChanged(originalData: FormData, currentData: FormData): boolean 
 
 function saveForm(formData: FormData) {
   const originalData = getOriginalFormData()
-  
+
   if (hasFormChanged(originalData, formData)) {
     // Only save if form has actually changed
     persistFormData(formData)
     showSuccessMessage('Form saved successfully')
-  } else {
+  }
+  else {
     showInfoMessage('No changes to save')
   }
 }
@@ -186,13 +188,13 @@ function findChangedProperties<T extends Record<string, any>>(
   newObj: T
 ): Partial<T> {
   const changes: Partial<T> = {}
-  
+
   for (const key in newObj) {
     if (!isDeepEqual(oldObj[key], newObj[key])) {
       changes[key] = newObj[key]
     }
   }
-  
+
   return changes
 }
 
@@ -232,9 +234,9 @@ describe('User Service', () => {
       email: 'john@example.com',
       preferences: { theme: 'dark' }
     }
-    
+
     const result = createUser(userData)
-    
+
     assertDeepEqual(result, {
       id: expect.any(Number),
       ...userData,
@@ -251,17 +253,18 @@ import { isDeepEqual } from '@setemiojo/utils'
 
 class DataSync {
   private localData: any = null
-  
+
   async sync(remoteData: any) {
     if (!this.localData || !isDeepEqual(this.localData, remoteData)) {
       console.log('Data changed, updating local copy')
       this.localData = remoteData
       await this.persistLocal(remoteData)
-    } else {
+    }
+    else {
       console.log('Data unchanged, skipping sync')
     }
   }
-  
+
   private async persistLocal(data: any) {
     // Save to local storage or database
   }

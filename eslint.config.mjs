@@ -7,4 +7,5 @@ export default setemiojo({
       'ts/prefer-ts-expect-error': 'off',
     },
   },
+  markdown: true,
 })

@@ -97,7 +97,7 @@ function processValue(value: string | null | undefined | 0) {
 ### Array Filtering
 
 ```ts
-import { notNullish, isTruthy } from '@setemiojo/utils'
+import { isTruthy, notNullish } from '@setemiojo/utils'
 
 // Filter out null/undefined from API responses
 interface ApiResponse {
@@ -107,7 +107,7 @@ interface ApiResponse {
 function processUsers(response: ApiResponse) {
   const validUsers = response.data.filter(notNullish)
   // validUsers is typed as User[]
-  
+
   return validUsers.map(user => ({
     id: user.id,
     name: user.name,
@@ -121,7 +121,7 @@ function processFormData(data: Record<string, any>) {
     Object.entries(data)
       .filter(([_, value]) => isTruthy(value))
   )
-  
+
   return cleanData
 }
 ```
@@ -138,9 +138,9 @@ function getNestedValue(obj: any) {
 
 // Use type guards for more control
 function getNestedValueSafe(obj: any) {
-  if (notNullish(obj) && 
-      notNullish(obj.user) && 
-      notNullish(obj.user.profile)) {
+  if (notNullish(obj)
+    && notNullish(obj.user)
+    && notNullish(obj.user.profile)) {
     return obj.user.profile.name
   }
   return null
@@ -150,7 +150,7 @@ function getNestedValueSafe(obj: any) {
 ### Data Validation
 
 ```ts
-import { notNullish, isTruthy } from '@setemiojo/utils'
+import { isTruthy, notNullish } from '@setemiojo/utils'
 
 interface FormField {
   value: string | null | undefined
@@ -159,13 +159,13 @@ interface FormField {
 
 function validateForm(fields: FormField[]) {
   const errors: string[] = []
-  
+
   fields.forEach((field, index) => {
     if (field.required && !isTruthy(field.value)) {
       errors.push(`Field ${index} is required`)
     }
   })
-  
+
   return {
     isValid: errors.length === 0,
     errors
@@ -207,7 +207,7 @@ function processApiUsers(users: ApiUser[]) {
 ### Configuration Processing
 
 ```ts
-import { notNullish, isTruthy } from '@setemiojo/utils'
+import { isTruthy, notNullish } from '@setemiojo/utils'
 
 interface Config {
   apiUrl?: string
@@ -221,26 +221,26 @@ function processConfig(rawConfig: Record<string, any>): Config {
   const cleanConfig = Object.fromEntries(
     Object.entries(rawConfig).filter(([_, value]) => notNullish(value))
   )
-  
+
   // Filter out falsy values for boolean flags
   const config: Config = {}
-  
+
   if (isTruthy(cleanConfig.apiUrl)) {
     config.apiUrl = cleanConfig.apiUrl
   }
-  
+
   if (isTruthy(cleanConfig.timeout)) {
     config.timeout = cleanConfig.timeout
   }
-  
+
   if (isTruthy(cleanConfig.retries)) {
     config.retries = cleanConfig.retries
   }
-  
+
   if (isTruthy(cleanConfig.debug)) {
     config.debug = cleanConfig.debug
   }
-  
+
   return config
 }
 ```
@@ -259,11 +259,11 @@ function processResults<T>(results: Result<T>[]) {
   const successful = results
     .filter(result => notNullish(result.data))
     .map(result => result.data) // TypeScript knows data is not null
-  
+
   const errors = results
     .filter(result => notNullish(result.error))
     .map(result => result.error) // TypeScript knows error is not null
-  
+
   return { successful, errors }
 }
 ```

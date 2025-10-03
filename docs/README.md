@@ -74,22 +74,28 @@ Utility for managing multiple promises with a fluent API.
 ## Quick Start
 
 ```ts
-import { 
-  // Array utilities
-  toArray, partition, uniq,
-  
+import {
   // String utilities
-  capitalize, template, randomStr,
-  
+  capitalize,
+  createSingletonPromise,
+  deepMerge,
+
+  isObject,
+  isString, // Type guards
+  notNullish,
+
   // Object utilities
-  objectMap, deepMerge, objectPick,
-  
-  // Promise utilities
-  sleep, createSingletonPromise,
-  
-  // Type guards
-  notNullish, isString, isObject,
-  
+  objectMap,
+  objectPick,
+  partition,
+
+  randomStr, // Promise utilities
+  sleep,
+
+  template, // Array utilities
+  toArray,
+  uniq,
+
   // And many more...
 } from '@setemiojo/utils'
 ```
