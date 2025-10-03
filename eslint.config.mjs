@@ -1,6 +1,6 @@
-import antfu from '@antfu/eslint-config'
+import setemiojo from '@setemiojo/eslint-config'
 
-export default antfu({
+export default setemiojo({
   typescript: {
     overrides: {
       'ts/ban-ts-comment': 'off',

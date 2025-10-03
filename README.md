@@ -1,15 +1,21 @@
-# @antfu/utils
+# @setemiojo/utils
 
-[![NPM version](https://img.shields.io/npm/v/@antfu/utils?color=a1b858&label=)](https://www.npmjs.com/package/@antfu/utils)
-[![Docs](https://img.shields.io/badge/docs-green)](https://www.jsdocs.io/package/@antfu/utils)
+A Fork [@antfu/utils](https://github.com/antfu/utils) 
 
-Opinionated collection of common JavaScript / TypeScript utils by [@antfu](https://github.com/antfu).
+[![NPM version](https://img.shields.io/npm/v/@setemiojo/utils?color=a1b858&label=)](https://www.npmjs.com/package/@setemiojo/utils)
+[![Docs](https://img.shields.io/badge/docs-green)](https://www.jsdocs.io/package/@setemiojo/utils)
+
+Opinionated collection of common JavaScript / TypeScript utils by [@oluwasetemi](https://github.com/oluwasetemi) forked from [Anthony Fu](https://github.com/antfu)
 
 - Tree-shakable ESM
 - Fully typed - with TSDocs
 - Type utilities - `Arrayable<T>`, `ElementOf<T>`, etc.
 
 > This package is designed to be used as `devDependencies` and bundled into your dist.
+
+## Documentation
+
+📚 **[View Full Documentation](./docs/README.md)** - Complete guide with examples for all utilities.
 
 ## Sponsors
 
