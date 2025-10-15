@@ -46,6 +46,7 @@
     "bumpp": "^10.2.3",
     "eslint": "^9.36.0",
     "p-limit": "^7.1.1",
+    "temporal-polyfill": "^0.3.0",
     "throttle-debounce": "5.0.0",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
