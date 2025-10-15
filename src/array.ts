@@ -32,10 +32,12 @@ export function mergeArrayable<T>(...args: Nullable<Arrayable<T>>[]): Array<T> {
 export type PartitionFilter<T> = (i: T, idx: number, arr: readonly T[]) => any
 
 /**
- * Divide an array into two parts by a filter function
+ * Divide an array into two or more parts by a filter function
+ * Can be used for classify, process
  *
  * @category Array
  * @example const [odd, even] = partition([1, 2, 3, 4], i => i % 2 != 0)
+ * @example const [small, medium, large] = partition([1, 2, 3, 4, 5, 6], i => i < 3, i => i < 5, i => i < 6)
  */
 export function partition<T>(array: readonly T[], f1: PartitionFilter<T>): [T[], T[]]
 export function partition<T>(array: readonly T[], f1: PartitionFilter<T>, f2: PartitionFilter<T>): [T[], T[], T[]]
@@ -210,6 +212,13 @@ export function shuffle<T>(array: T[]): T[] {
  *
  * Expect this function to be faster than using `Array.prototype.filter` on large arrays.
  *
+ * @example
+ * ```
+ * const arr = [1, 2, 3, 4, 5]
+ * filterInPlace(arr, i => i % 2 === 0)
+ * console.log(arr) // [1, 3, 5]
+ * ```
+ *
  * @category Array
  */
 export function filterInPlace<T>(array: T[], predicate: (item: T, index: number, arr: T[]) => unknown) {
@@ -218,4 +227,23 @@ export function filterInPlace<T>(array: T[], predicate: (item: T, index: number,
       array.splice(i, 1)
   }
   return array
+}
+
+/**
+ * Group an array by a key
+ *
+ * @category Array
+ * @example const grouped = groupBy([{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }, { id: 1, name: 'Johnny' }], 'id')
+ * @example const grouped = groupBy([{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }, { id: 1, name: 'Johnny' }], 'name')
+ */
+export function groupBy<T, K extends keyof T>(
+  arr: T[],
+  key: K,
+): Record<string, T[]> {
+  return arr.reduce((groups, item) => {
+    const groupKey = String(item[key])
+    groups[groupKey] = groups[groupKey] ?? []
+    groups[groupKey].push(item)
+    return groups
+  }, {} as Record<string, T[]>)
 }

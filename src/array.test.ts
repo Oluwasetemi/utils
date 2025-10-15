@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { filterInPlace, flattenArrayable, partition, range, toArray } from './array'
+import { filterInPlace, flattenArrayable, groupBy, partition, range, toArray } from './array'
 
 describe('toArray', () => {
   it.each([
@@ -78,4 +78,10 @@ it('filterInPlace', () => {
   const result = filterInPlace(data, i => i % 2)
   expect(data).toEqual([1, 3, 5, 7, 9])
   expect(data).toBe(result)
+})
+
+it('groupBy', () => {
+  const data = [{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }, { id: 1, name: 'Johnny' }]
+  const result = groupBy(data, 'id')
+  expect(result).toEqual({ 1: [{ id: 1, name: 'John' }, { id: 1, name: 'Johnny' }], 2: [{ id: 2, name: 'Jane' }] })
 })
