@@ -1,1 +1,8 @@
-export const timestamp = () => +Date.now()
+/**
+ * Get the current timestamp as a number
+ *
+ * @category Time
+ */
+export function timestamp() {
+  return +Date.now()
+}
