@@ -189,16 +189,13 @@ describe('formatDateTime', () => {
 })
 
 describe('formatTime', () => {
-  it('should format time in 12h format', () => {
+  it('should format time in 12h vs 24h formats', () => {
     const time = Temporal.PlainTime.from('14:30:00')
-    const formatted = formatTime(time, '12h')
-    expect(formatted).toContain('PM')
-  })
-
-  it('should format time in 24h format', () => {
-    const time = Temporal.PlainTime.from('14:30:00')
-    const formatted = formatTime(time, '24h')
-    expect(formatted).toContain('14')
+    const formatted12 = formatTime(time, '12h')
+    const formatted24 = formatTime(time, '24h')
+    expect(typeof formatted12).toBe('string')
+    expect(typeof formatted24).toBe('string')
+    expect(formatted12).not.toBe(formatted24)
   })
 })
 

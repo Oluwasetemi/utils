@@ -348,8 +348,10 @@ export function clampArrayRange(n: number, arr: readonly unknown[]) {
  * sample(['a', 'b', 'c'], 3) // e.g., ['b', 'a', 'b']
  * ```
  */
-export function sample<T>(arr: T[], quantity: number) {
-  return Array.from({ length: quantity }, _ => arr[Math.round(Math.random() * (arr.length - 1))])
+export function sample<T>(arr: T[], quantity: number): T[] {
+  if (arr.length === 0)
+    return []
+  return Array.from({ length: quantity }, _ => arr[Math.floor(Math.random() * arr.length)])
 }
 
 /**
