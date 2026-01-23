@@ -1,6 +1,11 @@
 import type { Fn } from './types'
 import { remove } from './array'
 
+/**
+ * Return type for createSingletonPromise.
+ *
+ * @category Promise
+ */
 export interface SingletonPromiseReturn<T> {
   (): Promise<T>
   /**
@@ -11,9 +16,25 @@ export interface SingletonPromiseReturn<T> {
 }
 
 /**
- * Create singleton promise function
+ * Create a singleton promise function that caches its result.
+ *
+ * The promise function will only execute once. Subsequent calls return the same promise.
+ * Use `reset()` to clear the cache and allow re-execution.
  *
  * @category Promise
+ * @param fn - The async function to wrap
+ * @returns A function that returns the cached promise, with a `reset` method
+ * @example
+ * ```ts
+ * const getUser = createSingletonPromise(async () => {
+ *   return await fetchUser()
+ * })
+ *
+ * await getUser() // Fetches user
+ * await getUser() // Returns cached promise
+ * await getUser.reset() // Clears cache
+ * await getUser() // Fetches user again
+ * ```
  */
 export function createSingletonPromise<T>(fn: () => Promise<T>): SingletonPromiseReturn<T> {
   let _promise: Promise<T> | undefined
@@ -34,9 +55,22 @@ export function createSingletonPromise<T>(fn: () => Promise<T>): SingletonPromis
 }
 
 /**
- * Promised `setTimeout`
+ * Promised `setTimeout` - sleep for a specified duration.
+ *
+ * Optionally execute a callback after the delay.
  *
  * @category Promise
+ * @param ms - Milliseconds to sleep
+ * @param callback - Optional function to call after sleeping
+ * @returns A promise that resolves after the delay
+ * @example
+ * ```ts
+ * await sleep(1000) // Sleep for 1 second
+ *
+ * await sleep(500, () => {
+ *   console.log('Woke up!')
+ * })
+ * ```
  */
 export function sleep(ms: number, callback?: Fn<any>) {
   return new Promise<void>(resolve =>
@@ -49,19 +83,27 @@ export function sleep(ms: number, callback?: Fn<any>) {
 }
 
 /**
- * Create a promise lock
+ * Create a promise lock for tracking and waiting on multiple async tasks.
+ *
+ * Useful for coordinating multiple concurrent operations and waiting for all to complete.
  *
  * @category Promise
+ * @returns An object with `run`, `wait`, `isWaiting`, and `clear` methods
  * @example
- * ```
+ * ```ts
  * const lock = createPromiseLock()
  *
- * lock.run(async () => {
- *   await doSomething()
- * })
+ * // Start multiple async tasks
+ * lock.run(async () => await fetchData1())
+ * lock.run(async () => await fetchData2())
  *
- * // in anther context:
- * await lock.wait() // it will wait all tasking finished
+ * // In another context, wait for all to complete
+ * await lock.wait()
+ *
+ * // Check if any tasks are running
+ * if (lock.isWaiting()) {
+ *   console.log('Still running...')
+ * }
  * ```
  */
 export function createPromiseLock() {
@@ -91,7 +133,9 @@ export function createPromiseLock() {
 }
 
 /**
- * Promise with `resolve` and `reject` methods of itself
+ * A Promise with externally accessible `resolve` and `reject` methods.
+ *
+ * @category Promise
  */
 export interface ControlledPromise<T = void> extends Promise<T> {
   resolve: (value: T | PromiseLike<T>) => void
@@ -99,17 +143,25 @@ export interface ControlledPromise<T = void> extends Promise<T> {
 }
 
 /**
- * Return a Promise with `resolve` and `reject` methods
+ * Create a Promise with externally accessible `resolve` and `reject` methods.
+ *
+ * Useful when the promise resolution needs to happen in a different context
+ * from where the promise is awaited.
  *
  * @category Promise
+ * @returns A promise with `resolve` and `reject` methods attached
  * @example
- * ```
- * const promise = createControlledPromise()
+ * ```ts
+ * const promise = createControlledPromise<string>()
  *
- * await promise
+ * // In one context, await the promise
+ * const result = await promise
  *
- * // in anther context:
- * promise.resolve(data)
+ * // In another context, resolve it
+ * promise.resolve('done!')
+ *
+ * // Or reject it
+ * promise.reject(new Error('failed'))
  * ```
  */
 export function createControlledPromise<T>(): ControlledPromise<T> {

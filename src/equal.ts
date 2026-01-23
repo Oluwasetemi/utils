@@ -1,5 +1,25 @@
 import { getTypeName } from './base'
 
+/**
+ * Performs a deep equality comparison between two values.
+ *
+ * Recursively compares objects and arrays by their contents.
+ * Uses Object.is() for primitive value comparison.
+ *
+ * @category Equal
+ * @param value1 - The first value to compare
+ * @param value2 - The second value to compare
+ * @returns True if the values are deeply equal, false otherwise
+ * @example
+ * ```ts
+ * isDeepEqual({ a: 1 }, { a: 1 }) // true
+ * isDeepEqual([1, 2, 3], [1, 2, 3]) // true
+ * isDeepEqual({ a: { b: 1 } }, { a: { b: 1 } }) // true
+ * isDeepEqual({ a: 1 }, { a: 2 }) // false
+ * isDeepEqual([1, 2], [1, 2, 3]) // false
+ * isDeepEqual(NaN, NaN) // true (uses Object.is)
+ * ```
+ */
 export function isDeepEqual(value1: any, value2: any): boolean {
   const type1 = getTypeName(value1)
   const type2 = getTypeName(value2)

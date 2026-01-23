@@ -1,9 +1,37 @@
 import { flattenArrayable } from './array'
 
+/**
+ * Clamps a number within the inclusive range specified by min and max.
+ *
+ * @category Math
+ * @param n - The number to clamp
+ * @param min - The minimum value
+ * @param max - The maximum value
+ * @returns The clamped value between min and max
+ * @example
+ * ```ts
+ * clamp(5, 0, 10) // 5
+ * clamp(-5, 0, 10) // 0
+ * clamp(15, 0, 10) // 10
+ * ```
+ */
 export function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n))
 }
 
+/**
+ * Calculates the sum of all provided numbers.
+ *
+ * @category Math
+ * @param args - Numbers or arrays of numbers to sum
+ * @returns The sum of all numbers
+ * @example
+ * ```ts
+ * sum(1, 2, 3) // 6
+ * sum([1, 2], [3, 4]) // 10
+ * sum(1, [2, 3], 4) // 10
+ * ```
+ */
 export function sum(...args: number[] | number[][]) {
   return flattenArrayable(args).reduce((a, b) => a + b, 0)
 }

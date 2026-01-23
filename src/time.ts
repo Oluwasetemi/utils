@@ -1454,9 +1454,19 @@ export function filterDatesInRange(dates: Temporal.PlainDate[], start: Temporal.
 }
 
 /**
- * Get unique dates
+ * Get unique dates from an array, removing duplicates
  *
  * @category Time
+ * @param dates - Array of dates that may contain duplicates
+ * @returns Array of unique dates
+ * @example
+ * ```
+ * getUniqueDates([
+ *   Temporal.PlainDate.from('2023-01-01'),
+ *   Temporal.PlainDate.from('2023-01-01'),
+ *   Temporal.PlainDate.from('2023-01-02')
+ * ]) // [2023-01-01, 2023-01-02]
+ * ```
  */
 export function getUniqueDates(dates: Temporal.PlainDate[]): Temporal.PlainDate[] {
   return uniq(dates)
