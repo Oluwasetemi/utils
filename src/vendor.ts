@@ -10,6 +10,30 @@ interface CancelOptions {
 }
 
 /**
+ * Options for the throttle function.
+ *
+ * @category Vendor
+ */
+interface ThrottleOptions {
+  /** If true, disable the execution on the leading edge. */
+  noLeading?: boolean
+  /** If true, disable the execution on the trailing edge. */
+  noTrailing?: boolean
+  /** If true, enable debounce mode (used internally). */
+  debounceMode?: boolean
+}
+
+/**
+ * Options for the debounce function.
+ *
+ * @category Vendor
+ */
+interface DebounceOptions {
+  /** If true, execute the callback at the beginning of the delay instead of the end. */
+  atBegin?: boolean
+}
+
+/**
  * A function type that includes a cancel method.
  *
  * @category Vendor
@@ -42,9 +66,12 @@ interface ReturnWithCancel<T extends (...args: any[]) => any> {
  * throttledScroll.cancel()
  * ```
  */
-export function throttle<T extends (...args: any[]) => any>(...args: any[]): ReturnWithCancel<T> {
-  // @ts-expect-error
-  return _throttle(...args)
+export function throttle<T extends (...args: any[]) => any>(
+  delay: number,
+  callback: T,
+  options?: ThrottleOptions,
+): ReturnWithCancel<T> {
+  return _throttle(delay, callback, options) as ReturnWithCancel<T>
 }
 
 /**
@@ -70,7 +97,10 @@ export function throttle<T extends (...args: any[]) => any>(...args: any[]): Ret
  * debouncedSearch.cancel()
  * ```
  */
-export function debounce<T extends (...args: any[]) => any>(...args: any[]): ReturnWithCancel<T> {
-  // @ts-expect-error
-  return _debounce(...args)
+export function debounce<T extends (...args: any[]) => any>(
+  delay: number,
+  callback: T,
+  options?: DebounceOptions,
+): ReturnWithCancel<T> {
+  return _debounce(delay, callback, options) as ReturnWithCancel<T>
 }

@@ -3,6 +3,7 @@
 A Fork [@antfu/utils](https://github.com/antfu/utils)
 
 [![NPM version](https://img.shields.io/npm/v/@setemiojo/utils?color=a1b858&label=)](https://www.npmjs.com/package/@setemiojo/utils)
+[![codecov](https://codecov.io/gh/oluwasetemi/utils/branch/main/graph/badge.svg)](https://codecov.io/gh/oluwasetemi/utils)
 [![Docs](https://img.shields.io/badge/docs-green)](https://www.jsdocs.io/package/@setemiojo/utils)
 
 Opinionated collection of common JavaScript / TypeScript utils by [@oluwasetemi](https://github.com/oluwasetemi) forked from [Anthony Fu](https://github.com/antfu)

@@ -59,31 +59,49 @@ export function ensureSuffix(suffix: string, str: string) {
 }
 
 /**
- * Simple template engine, similar to Python's `.format()`.
+ * Simple template engine with object-based placeholders.
  *
- * Supports index-based (`{0}`, `{1}`) or object-based (`{key}`) placeholders.
- * For object-based templates, a fallback value can be provided for missing keys.
+ * Replaces `{key}` placeholders with values from the provided object.
+ * A fallback value can be provided for missing keys.
  *
  * @category String
- * @param str - The template string with placeholders
- * @param args - Values to replace placeholders, or an object with key-value pairs
+ * @param str - The template string with `{key}` placeholders
+ * @param object - Object with key-value pairs to replace placeholders
+ * @param fallback - Optional fallback value or function for missing keys
  * @returns The formatted string
  * @example
  * ```ts
- * // Index-based
- * template('Hello {0}! My name is {1}.', 'Inès', 'Anthony')
- * // 'Hello Inès! My name is Anthony.'
- *
- * // Object-based
  * template('{greet}! My name is {name}.', { greet: 'Hello', name: 'Anthony' })
  * // 'Hello! My name is Anthony.'
  *
- * // With fallback
+ * // With string fallback
  * template('{greet}! My name is {name}.', { greet: 'Hello' }, 'unknown')
  * // 'Hello! My name is unknown.'
+ *
+ * // With function fallback
+ * template('{greet}! My name is {name}.', { greet: 'Hello' }, (key) => `[${key}]`)
+ * // 'Hello! My name is [name].'
  * ```
  */
 export function template(str: string, object: Record<string | number, any>, fallback?: string | ((key: string) => string)): string
+/**
+ * Simple template engine with index-based placeholders.
+ *
+ * Replaces `{0}`, `{1}`, etc. placeholders with the provided arguments.
+ *
+ * @category String
+ * @param str - The template string with `{0}`, `{1}`, etc. placeholders
+ * @param args - Values to replace placeholders by index
+ * @returns The formatted string
+ * @example
+ * ```ts
+ * template('Hello {0}! My name is {1}.', 'Inès', 'Anthony')
+ * // 'Hello Inès! My name is Anthony.'
+ *
+ * template('The answer is {0}.', 42)
+ * // 'The answer is 42.'
+ * ```
+ */
 export function template(str: string, ...args: (string | number | bigint | undefined | null)[]): string
 export function template(str: string, ...args: any[]): string {
   const [firstArg, fallback] = args

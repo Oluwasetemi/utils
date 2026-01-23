@@ -36,10 +36,12 @@
     "release": "bumpp",
     "start": "tsx src/index.ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest"
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "devDependencies": {
     "@antfu/ni": "^26.0.1",
+    "@vitest/coverage-v8": "^3.2.4",
     "@setemiojo/eslint-config": "5.4.3",
     "@types/node": "^24.5.2",
     "@types/throttle-debounce": "^5.0.2",

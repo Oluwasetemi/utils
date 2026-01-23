@@ -114,9 +114,13 @@ export type ArgumentsType<T> = T extends ((...args: infer A) => any) ? A : never
  * @category Types
  */
 export type MergeInsertions<T>
-  = T extends object
-    ? { [K in keyof T]: MergeInsertions<T[K]> }
-    : T
+  = T extends (...args: any[]) => any
+    ? T
+    : T extends readonly any[]
+      ? T
+      : T extends object
+        ? { [K in keyof T]: MergeInsertions<T[K]> }
+        : T
 
 /**
  * Deeply merges two object types.

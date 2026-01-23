@@ -61,7 +61,8 @@ export function invoke<T>(fn: () => T): T {
  * // Or for debugging in chains
  * const result = someArray
  *   .map(x => x * 2)
- *   .filter(tap(arr => console.log('After filter:', arr)))
+ *   .map(tap(n => console.log('Doubled value:', n)))
+ *   .filter(n => n > 5)
  * ```
  */
 export function tap<T>(value: T, callback: (value: T) => void): T {

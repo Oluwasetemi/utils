@@ -221,21 +221,31 @@ export function at<T>(array: readonly T[] | [], index: number): T | undefined {
 }
 
 /**
- * Generate a range array of numbers. The `stop` is exclusive.
+ * Generate a range array of numbers from 0 to stop (exclusive).
  *
  * @category Array
- * @param start - Start of range (or stop if only one argument)
- * @param stop - End of range (exclusive)
- * @param step - Step increment (default: 1)
- * @returns Array of numbers in the range
+ * @param stop - End of range (exclusive), starts from 0
+ * @returns Array of numbers in the range [0, stop)
  * @example
  * ```ts
  * range(5) // [0, 1, 2, 3, 4]
+ * ```
+ */
+export function range(stop: number): number[]
+/**
+ * Generate a range array of numbers from start to stop (exclusive).
+ *
+ * @category Array
+ * @param start - Start of range (inclusive)
+ * @param stop - End of range (exclusive)
+ * @param step - Step increment (default: 1)
+ * @returns Array of numbers in the range [start, stop)
+ * @example
+ * ```ts
  * range(2, 5) // [2, 3, 4]
  * range(0, 10, 2) // [0, 2, 4, 6, 8]
  * ```
  */
-export function range(stop: number): number[]
 export function range(start: number, stop: number, step?: number): number[]
 export function range(...args: any): number[] {
   let start: number, stop: number, step: number

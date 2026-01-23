@@ -266,8 +266,9 @@ export function objectPick<O extends object, T extends keyof O>(obj: O, keys: T[
  * ```
  */
 export function objectOmit<O extends object, T extends keyof O>(obj: O, keys: T[], omitUndefined = false) {
+  const keySet = new Set<PropertyKey>(keys.map(k => typeof k === 'number' ? String(k) : k))
   return Object.fromEntries(Object.entries(obj).filter(([key, value]) => {
-    return (!omitUndefined || value !== undefined) && !keys.includes(key as T)
+    return (!omitUndefined || value !== undefined) && !keySet.has(key)
   })) as Omit<O, T>
 }
 
