@@ -59,19 +59,33 @@ export function mergeArrayable<T>(...args: Nullable<Arrayable<T>>[]): Array<T> {
 export type PartitionFilter<T> = (i: T, idx: number, arr: readonly T[]) => any
 
 /**
- * Divide an array into two or more parts by filter functions.
+ * Divide an array into two parts by a filter function.
+ *
+ * Items matching the filter go into the first partition, others into the second.
+ *
+ * @category Array
+ * @param array - The array to partition
+ * @param f1 - Filter function to determine the first partition
+ * @returns A tuple of two arrays: [matching, non-matching]
+ * @example
+ * ```ts
+ * const [odd, even] = partition([1, 2, 3, 4], i => i % 2 !== 0)
+ * // odd = [1, 3], even = [2, 4]
+ * ```
+ */
+export function partition<T>(array: readonly T[], f1: PartitionFilter<T>): [T[], T[]]
+/**
+ * Divide an array into multiple parts by filter functions.
  *
  * Each filter creates a partition. Items not matching any filter go into the last partition.
  *
  * @category Array
  * @param array - The array to partition
- * @param filters - Filter functions to determine partitions
- * @returns An array of partitioned arrays
+ * @param f1 - First filter function
+ * @param f2 - Second filter function
+ * @returns A tuple of arrays for each partition
  * @example
  * ```ts
- * const [odd, even] = partition([1, 2, 3, 4], i => i % 2 !== 0)
- * // odd = [1, 3], even = [2, 4]
- *
  * const [small, medium, large] = partition(
  *   [1, 2, 3, 4, 5, 6],
  *   i => i < 3,
@@ -80,7 +94,6 @@ export type PartitionFilter<T> = (i: T, idx: number, arr: readonly T[]) => any
  * // small = [1, 2], medium = [3, 4], large = [5, 6]
  * ```
  */
-export function partition<T>(array: readonly T[], f1: PartitionFilter<T>): [T[], T[]]
 export function partition<T>(array: readonly T[], f1: PartitionFilter<T>, f2: PartitionFilter<T>): [T[], T[], T[]]
 export function partition<T>(array: readonly T[], f1: PartitionFilter<T>, f2: PartitionFilter<T>, f3: PartitionFilter<T>): [T[], T[], T[], T[]]
 export function partition<T>(array: readonly T[], f1: PartitionFilter<T>, f2: PartitionFilter<T>, f3: PartitionFilter<T>, f4: PartitionFilter<T>): [T[], T[], T[], T[], T[]]
@@ -147,11 +160,18 @@ export function uniqueBy<T>(array: readonly T[], equalFn: (a: any, b: any) => bo
 }
 
 /**
+ * Get the last item of an empty array.
+ *
+ * @category Array
+ * @param array - An empty array
+ */
+export function last(array: readonly []): undefined
+/**
  * Get the last item of an array.
  *
  * @category Array
  * @param array - The array to get the last item from
- * @returns The last item, or undefined if empty
+ * @returns The last item
  * @example
  * ```ts
  * last([1, 2, 3]) // 3
@@ -159,7 +179,6 @@ export function uniqueBy<T>(array: readonly T[], equalFn: (a: any, b: any) => bo
  * last([]) // undefined
  * ```
  */
-export function last(array: readonly []): undefined
 export function last<T>(array: readonly T[]): T
 export function last<T>(array: readonly T[]): T | undefined {
   return at(array, -1)
@@ -193,12 +212,20 @@ export function remove<T>(array: T[], value: T) {
 }
 
 /**
+ * Get the nth item of an empty array.
+ *
+ * @category Array
+ * @param array - An empty array
+ * @param index - The index
+ */
+export function at(array: readonly [], index: number): undefined
+/**
  * Get the nth item of an array. Supports negative indices for backward access.
  *
  * @category Array
  * @param array - The array to access
  * @param index - The index (negative for backward)
- * @returns The item at the index, or undefined if out of bounds
+ * @returns The item at the index
  * @example
  * ```ts
  * at([1, 2, 3], 0) // 1
@@ -207,7 +234,6 @@ export function remove<T>(array: T[], value: T) {
  * at([1, 2, 3], 5) // undefined
  * ```
  */
-export function at(array: readonly [], index: number): undefined
 export function at<T>(array: readonly T[], index: number): T
 export function at<T>(array: readonly T[] | [], index: number): T | undefined {
   const len = array.length

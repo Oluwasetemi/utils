@@ -7,7 +7,6 @@ import type { Fn, Nullable } from './types'
  *
  * @category Function
  * @param functions - Array of functions to invoke
- * @returns void
  * @example
  * ```ts
  * const cleanup1 = () => console.log('cleanup 1')

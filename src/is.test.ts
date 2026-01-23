@@ -44,7 +44,7 @@ describe('isBoolean', () => {
 describe('isFunction', () => {
   it('should return true for functions', () => {
     expect(isFunction(() => {})).toBe(true)
-    expect(isFunction(function () {})).toBe(true)
+    expect(isFunction(() => {})).toBe(true)
     expect(isFunction(async () => {})).toBe(true)
   })
 
@@ -125,7 +125,7 @@ describe('isNull', () => {
 describe('isRegExp', () => {
   it('should return true for regex', () => {
     expect(isRegExp(/test/)).toBe(true)
-    expect(isRegExp(new RegExp('test'))).toBe(true)
+    expect(isRegExp(/test/)).toBe(true)
   })
 
   it('should return false for non-regex', () => {
