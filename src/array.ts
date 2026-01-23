@@ -2,9 +2,20 @@ import type { Arrayable, Nullable } from './types'
 import { clamp } from './math'
 
 /**
- * Convert `Arrayable<T>` to `Array<T>`
+ * Convert `Arrayable<T>` to `Array<T>`.
+ *
+ * Wraps a single value in an array, or returns the array as-is.
  *
  * @category Array
+ * @param array - Value or array to convert
+ * @returns An array containing the value(s)
+ * @example
+ * ```ts
+ * toArray(1) // [1]
+ * toArray([1, 2]) // [1, 2]
+ * toArray(null) // []
+ * toArray(undefined) // []
+ * ```
  */
 export function toArray<T>(array?: Nullable<Arrayable<T>>): Array<T> {
   array = array ?? []
@@ -12,18 +23,34 @@ export function toArray<T>(array?: Nullable<Arrayable<T>>): Array<T> {
 }
 
 /**
- * Convert `Arrayable<T>` to `Array<T>` and flatten it
+ * Convert `Arrayable<T>` to `Array<T>` and flatten it one level deep.
  *
  * @category Array
+ * @param array - Value or nested array to flatten
+ * @returns A flattened array
+ * @example
+ * ```ts
+ * flattenArrayable([1, [2, 3]]) // [1, 2, 3]
+ * flattenArrayable([[1], [2]]) // [1, 2]
+ * flattenArrayable(1) // [1]
+ * ```
  */
 export function flattenArrayable<T>(array?: Nullable<Arrayable<T | Array<T>>>): Array<T> {
   return toArray(array).flat(1) as Array<T>
 }
 
 /**
- * Use rest arguments to merge arrays
+ * Merge multiple arrays or values into a single array.
  *
  * @category Array
+ * @param args - Values or arrays to merge
+ * @returns A single merged array
+ * @example
+ * ```ts
+ * mergeArrayable([1, 2], [3, 4]) // [1, 2, 3, 4]
+ * mergeArrayable(1, 2, [3, 4]) // [1, 2, 3, 4]
+ * mergeArrayable([1], null, [2]) // [1, 2]
+ * ```
  */
 export function mergeArrayable<T>(...args: Nullable<Arrayable<T>>[]): Array<T> {
   return args.flatMap(i => toArray(i))
@@ -32,12 +59,26 @@ export function mergeArrayable<T>(...args: Nullable<Arrayable<T>>[]): Array<T> {
 export type PartitionFilter<T> = (i: T, idx: number, arr: readonly T[]) => any
 
 /**
- * Divide an array into two or more parts by a filter function
- * Can be used for classify, process
+ * Divide an array into two or more parts by filter functions.
+ *
+ * Each filter creates a partition. Items not matching any filter go into the last partition.
  *
  * @category Array
- * @example const [odd, even] = partition([1, 2, 3, 4], i => i % 2 != 0)
- * @example const [small, medium, large] = partition([1, 2, 3, 4, 5, 6], i => i < 3, i => i < 5, i => i < 6)
+ * @param array - The array to partition
+ * @param filters - Filter functions to determine partitions
+ * @returns An array of partitioned arrays
+ * @example
+ * ```ts
+ * const [odd, even] = partition([1, 2, 3, 4], i => i % 2 !== 0)
+ * // odd = [1, 3], even = [2, 4]
+ *
+ * const [small, medium, large] = partition(
+ *   [1, 2, 3, 4, 5, 6],
+ *   i => i < 3,
+ *   i => i < 5
+ * )
+ * // small = [1, 2], medium = [3, 4], large = [5, 6]
+ * ```
  */
 export function partition<T>(array: readonly T[], f1: PartitionFilter<T>): [T[], T[]]
 export function partition<T>(array: readonly T[], f1: PartitionFilter<T>, f2: PartitionFilter<T>): [T[], T[], T[]]
@@ -63,18 +104,38 @@ export function partition<T>(array: readonly T[], ...filters: PartitionFilter<T>
 }
 
 /**
- * Unique an Array
+ * Remove duplicate values from an array.
+ *
+ * Uses Set internally, so works best with primitive values.
  *
  * @category Array
+ * @param array - The array to deduplicate
+ * @returns A new array with unique values
+ * @example
+ * ```ts
+ * uniq([1, 2, 2, 3, 3, 3]) // [1, 2, 3]
+ * uniq(['a', 'b', 'a']) // ['a', 'b']
+ * ```
  */
 export function uniq<T>(array: readonly T[]): T[] {
   return Array.from(new Set(array))
 }
 
 /**
- * Unique an Array by a custom equality function
+ * Remove duplicate values from an array using a custom equality function.
+ *
+ * Useful for deduplicating arrays of objects.
  *
  * @category Array
+ * @param array - The array to deduplicate
+ * @param equalFn - Function to compare two items for equality
+ * @returns A new array with unique values
+ * @example
+ * ```ts
+ * const users = [{ id: 1 }, { id: 2 }, { id: 1 }]
+ * uniqueBy(users, (a, b) => a.id === b.id)
+ * // [{ id: 1 }, { id: 2 }]
+ * ```
  */
 export function uniqueBy<T>(array: readonly T[], equalFn: (a: any, b: any) => boolean): T[] {
   return array.reduce((acc: T[], cur: any) => {
@@ -86,9 +147,17 @@ export function uniqueBy<T>(array: readonly T[], equalFn: (a: any, b: any) => bo
 }
 
 /**
- * Get last item
+ * Get the last item of an array.
  *
  * @category Array
+ * @param array - The array to get the last item from
+ * @returns The last item, or undefined if empty
+ * @example
+ * ```ts
+ * last([1, 2, 3]) // 3
+ * last(['a', 'b']) // 'b'
+ * last([]) // undefined
+ * ```
  */
 export function last(array: readonly []): undefined
 export function last<T>(array: readonly T[]): T
@@ -97,9 +166,20 @@ export function last<T>(array: readonly T[]): T | undefined {
 }
 
 /**
- * Remove an item from Array
+ * Remove an item from an array by value. Mutates the array.
+ *
+ * Only removes the first occurrence of the value.
  *
  * @category Array
+ * @param array - The array to remove from (will be mutated)
+ * @param value - The value to remove
+ * @returns True if the item was found and removed, false otherwise
+ * @example
+ * ```ts
+ * const arr = [1, 2, 3, 2]
+ * remove(arr, 2) // true, arr is now [1, 3, 2]
+ * remove(arr, 5) // false, arr unchanged
+ * ```
  */
 export function remove<T>(array: T[], value: T) {
   if (!array)
@@ -113,9 +193,19 @@ export function remove<T>(array: T[], value: T) {
 }
 
 /**
- * Get nth item of Array. Negative for backward
+ * Get the nth item of an array. Supports negative indices for backward access.
  *
  * @category Array
+ * @param array - The array to access
+ * @param index - The index (negative for backward)
+ * @returns The item at the index, or undefined if out of bounds
+ * @example
+ * ```ts
+ * at([1, 2, 3], 0) // 1
+ * at([1, 2, 3], -1) // 3
+ * at([1, 2, 3], -2) // 2
+ * at([1, 2, 3], 5) // undefined
+ * ```
  */
 export function at(array: readonly [], index: number): undefined
 export function at<T>(array: readonly T[], index: number): T
@@ -131,9 +221,19 @@ export function at<T>(array: readonly T[] | [], index: number): T | undefined {
 }
 
 /**
- * Genrate a range array of numbers. The `stop` is exclusive.
+ * Generate a range array of numbers. The `stop` is exclusive.
  *
  * @category Array
+ * @param start - Start of range (or stop if only one argument)
+ * @param stop - End of range (exclusive)
+ * @param step - Step increment (default: 1)
+ * @returns Array of numbers in the range
+ * @example
+ * ```ts
+ * range(5) // [0, 1, 2, 3, 4]
+ * range(2, 5) // [2, 3, 4]
+ * range(0, 10, 2) // [0, 2, 4, 6, 8]
+ * ```
  */
 export function range(stop: number): number[]
 export function range(start: number, stop: number, step?: number): number[]
@@ -160,12 +260,19 @@ export function range(...args: any): number[] {
 }
 
 /**
- * Move element in an Array
+ * Move an element in an array from one index to another. Mutates the array.
  *
  * @category Array
- * @param arr
- * @param from
- * @param to
+ * @param arr - The array to modify (will be mutated)
+ * @param from - Source index
+ * @param to - Destination index
+ * @returns The modified array
+ * @example
+ * ```ts
+ * const arr = ['a', 'b', 'c', 'd']
+ * move(arr, 0, 2) // ['b', 'c', 'a', 'd']
+ * move(arr, 3, 1) // ['b', 'd', 'c', 'a']
+ * ```
  */
 export function move<T>(arr: T[], from: number, to: number) {
   arr.splice(to, 0, arr.splice(from, 1)[0])
@@ -173,28 +280,55 @@ export function move<T>(arr: T[], from: number, to: number) {
 }
 
 /**
- * Clamp a number to the index range of an array
+ * Clamp a number to the valid index range of an array.
  *
  * @category Array
+ * @param n - The number to clamp
+ * @param arr - The array to get the range from
+ * @returns The clamped index (between 0 and arr.length - 1)
+ * @example
+ * ```ts
+ * clampArrayRange(-5, [1, 2, 3]) // 0
+ * clampArrayRange(1, [1, 2, 3]) // 1
+ * clampArrayRange(10, [1, 2, 3]) // 2
+ * ```
  */
 export function clampArrayRange(n: number, arr: readonly unknown[]) {
   return clamp(n, 0, arr.length - 1)
 }
 
 /**
- * Get random item(s) from an array
+ * Get random item(s) from an array.
  *
- * @param arr
- * @param quantity - quantity of random items which will be returned
+ * Items may be selected multiple times (sampling with replacement).
+ *
+ * @category Array
+ * @param arr - The array to sample from
+ * @param quantity - Number of random items to return
+ * @returns Array of randomly selected items
+ * @example
+ * ```ts
+ * sample([1, 2, 3, 4, 5], 2) // e.g., [3, 1]
+ * sample(['a', 'b', 'c'], 3) // e.g., ['b', 'a', 'b']
+ * ```
  */
 export function sample<T>(arr: T[], quantity: number) {
   return Array.from({ length: quantity }, _ => arr[Math.round(Math.random() * (arr.length - 1))])
 }
 
 /**
- * Shuffle an array. This function mutates the array.
+ * Shuffle an array randomly. This function mutates the array.
+ *
+ * Uses the Fisher-Yates shuffle algorithm.
  *
  * @category Array
+ * @param array - The array to shuffle (will be mutated)
+ * @returns The shuffled array
+ * @example
+ * ```ts
+ * const arr = [1, 2, 3, 4, 5]
+ * shuffle(arr) // e.g., [3, 1, 5, 2, 4]
+ * ```
  */
 export function shuffle<T>(array: T[]): T[] {
   for (let i = array.length - 1; i > 0; i--) {
@@ -204,22 +338,23 @@ export function shuffle<T>(array: T[]): T[] {
   return array
 }
 
-// https://jsbenchmark.com/#eyJjYXNlcyI6W3siaWQiOiJXR01CMEJLVXgwbUJDYVc3NmFHSVciLCJjb2RlIjoibGV0IGEgPSBEQVRBXG5hID0gZmlsdGVyKGEsIGkgPT4gaSAlIDUwID09PSAwKVxuYSA9IGZpbHRlcihhLCBpID0-IGkgJSAxMCA9PT0gMClcbmEgPSBmaWx0ZXIoYSwgaSA9PiBpICUgMiA9PT0gMCkiLCJuYW1lIjoiZmlsdGVyIiwiZGVwZW5kZW5jaWVzIjpbXX0seyJpZCI6Ik9VSnozNU1QTkdhWVZ2eVo3S3A1UiIsImNvZGUiOiJsZXQgYSA9IERBVEFcbmEgPSBmaWx0ZXJJblBsYWNlKGEsIGkgPT4gaSAlIDUwID09PSAwKVxuYSA9IGZpbHRlckluUGxhY2UoYSwgaSA9PiBpICUgMTAgPT09IDApXG5hID0gZmlsdGVySW5QbGFjZShhLCBpID0-IGkgJSAyID09PSAwKSIsIm5hbWUiOiJmaWx0ZXJJblBsYWNlIiwiZGVwZW5kZW5jaWVzIjpbXX1dLCJjb25maWciOnsibmFtZSI6IkJhc2ljIGV4YW1wbGUiLCJwYXJhbGxlbCI6dHJ1ZSwiZ2xvYmFsVGVzdENvbmZpZyI6eyJkZXBlbmRlbmNpZXMiOltdfSwiZGF0YUNvZGUiOiJnbG9iYWxUaGlzLmZpbHRlciA9IGZ1bmN0aW9uIGZpbHRlcihkYXRhLCBwcmVkaWNhdGUpIHtcbiAgcmV0dXJuIGRhdGEuZmlsdGVyKHByZWRpY2F0ZSlcbn1cblxuZ2xvYmFsVGhpcy5maWx0ZXJJblBsYWNlID0gZnVuY3Rpb24gZmlsdGVySW5QbGFjZShkYXRhLCBwcmVkaWNhdGUpIHtcbiAgZm9yIChsZXQgaSA9IGRhdGEubGVuZ3RoOyBpLS07IGk-PTApIHtcbiAgICBpZiAoIXByZWRpY2F0ZShkYXRhW2ldLCBpLCBkYXRhKSlcbiAgICAgIGRhdGEuc3BsaWNlKGksIDEpXG4gIH1cbiAgcmV0dXJuIGRhdGFcbn1cblxucmV0dXJuIFsuLi5BcnJheSgxMDAwKS5rZXlzKCksLi4uQXJyYXkoMTAwMCkua2V5cygpLC4uLkFycmF5KDEwMDApLmtleXMoKV0ifX0
 /**
- * Filter out items from an array in place.
- * This function mutates the array.
- * `predicate` get through the array from the end to the start for performance.
+ * Filter out items from an array in place. This function mutates the array.
  *
- * Expect this function to be faster than using `Array.prototype.filter` on large arrays.
- *
- * @example
- * ```
- * const arr = [1, 2, 3, 4, 5]
- * filterInPlace(arr, i => i % 2 === 0)
- * console.log(arr) // [1, 3, 5]
- * ```
+ * The predicate iterates from the end to the start for better performance.
+ * Faster than `Array.prototype.filter` on large arrays since it avoids creating a new array.
+ * [Read More](https://jsbenchmark.com/#eyJjYXNlcyI6W3siaWQiOiJXR01CMEJLVXgwbUJDYVc3NmFHSVciLCJjb2RlIjoibGV0IGEgPSBEQVRBXG5hID0gZmlsdGVyKGEsIGkgPT4gaSAlIDUwID09PSAwKVxuYSA9IGZpbHRlcihhLCBpID0-IGkgJSAxMCA9PT0gMClcbmEgPSBmaWx0ZXIoYSwgaSA9PiBpICUgMiA9PT0gMCkiLCJuYW1lIjoiZmlsdGVyIiwiZGVwZW5kZW5jaWVzIjpbXX0seyJpZCI6Ik9VSnozNU1QTkdhWVZ2eVo3S3A1UiIsImNvZGUiOiJsZXQgYSA9IERBVEFcbmEgPSBmaWx0ZXJJblBsYWNlKGEsIGkgPT4gaSAlIDUwID09PSAwKVxuYSA9IGZpbHRlckluUGxhY2UoYSwgaSA9PiBpICUgMTAgPT09IDApXG5hID0gZmlsdGVySW5QbGFjZShhLCBpID0-IGkgJSAyID09PSAwKSIsIm5hbWUiOiJmaWx0ZXJJblBsYWNlIiwiZGVwZW5kZW5jaWVzIjpbXX1dLCJjb25maWciOnsibmFtZSI6IkJhc2ljIGV4YW1wbGUiLCJwYXJhbGxlbCI6dHJ1ZSwiZ2xvYmFsVGVzdENvbmZpZyI6eyJkZXBlbmRlbmNpZXMiOltdfSwiZGF0YUNvZGUiOiJnbG9iYWxUaGlzLmZpbHRlciA9IGZ1bmN0aW9uIGZpbHRlcihkYXRhLCBwcmVkaWNhdGUpIHtcbiAgcmV0dXJuIGRhdGEuZmlsdGVyKHByZWRpY2F0ZSlcbn1cblxuZ2xvYmFsVGhpcy5maWx0ZXJJblBsYWNlID0gZnVuY3Rpb24gZmlsdGVySW5QbGFjZShkYXRhLCBwcmVkaWNhdGUpIHtcbiAgZm9yIChsZXQgaSA9IGRhdGEubGVuZ3RoOyBpLS07IGk-PTApIHtcbiAgICBpZiAoIXByZWRpY2F0ZShkYXRhW2ldLCBpLCBkYXRhKSlcbiAgICAgIGRhdGEuc3BsaWNlKGksIDEpXG4gIH1cbiAgcmV0dXJuIGRhdGFcbn1cblxucmV0dXJuIFsuLi5BcnJheSgxMDAwKS5rZXlzKCksLi4uQXJyYXkoMTAwMCkua2V5cygpLC4uLkFycmF5KDEwMDApLmtleXMoKV0ifX0)
  *
  * @category Array
+ * @param array - The array to filter (will be mutated)
+ * @param predicate - Function that returns true for items to keep
+ * @returns The filtered array (same reference)
+ * @example
+ * ```ts
+ * const arr = [1, 2, 3, 4, 5]
+ * filterInPlace(arr, i => i % 2 !== 0)
+ * console.log(arr) // [1, 3, 5]
+ * ```
  */
 export function filterInPlace<T>(array: T[], predicate: (item: T, index: number, arr: T[]) => unknown) {
   for (let i = array.length; i--; i >= 0) {
@@ -230,11 +365,22 @@ export function filterInPlace<T>(array: T[], predicate: (item: T, index: number,
 }
 
 /**
- * Group an array by a key
+ * Group an array of objects by a key.
  *
  * @category Array
- * @example const grouped = groupBy([{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }, { id: 1, name: 'Johnny' }], 'id')
- * @example const grouped = groupBy([{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }, { id: 1, name: 'Johnny' }], 'name')
+ * @param arr - The array to group
+ * @param key - The key to group by
+ * @returns An object with keys as group names and values as arrays of items
+ * @example
+ * ```ts
+ * const users = [
+ *   { id: 1, name: 'John' },
+ *   { id: 2, name: 'Jane' },
+ *   { id: 1, name: 'Johnny' }
+ * ]
+ * groupBy(users, 'id')
+ * // { '1': [{ id: 1, name: 'John' }, { id: 1, name: 'Johnny' }], '2': [{ id: 2, name: 'Jane' }] }
+ * ```
  */
 export function groupBy<T, K extends keyof T>(
   arr: T[],
