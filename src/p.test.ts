@@ -78,4 +78,36 @@ describe('should', () => {
     // @see issue #47
     expectTypeOf(await p.map(async i => i).map(async i => i)).toEqualTypeOf<number[]>()
   })
+
+  it('forEach', async () => {
+    const results: number[] = []
+    await P([1, 2, 3]).forEach(x => results.push(x * 2))
+    expect(results).toEqual([2, 4, 6])
+  })
+
+  it('clear', async () => {
+    const instance = P([1, 2])
+    instance.add(Promise.resolve(3))
+    instance.clear()
+    const result = await instance
+    expect(result).toEqual([1, 2])
+  })
+
+  it('catch', async () => {
+    const instance = P([Promise.reject(new Error('oops'))])
+    await expect(instance.catch(e => `caught: ${(e as Error).message}`)).resolves.toBe('caught: oops')
+  })
+
+  it('finally', async () => {
+    let called = false
+    await P([1, 2]).finally(() => { called = true })
+    expect(called).toBe(true)
+  })
+
+  it('map with filtered VOID items (filter then map)', async () => {
+    const result = await P([1, 2, 3, 4])
+      .filter(i => i % 2 === 0)
+      .map(i => i * 10)
+    expect(result).toEqual([20, 40])
+  })
 })

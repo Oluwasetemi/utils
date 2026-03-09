@@ -205,6 +205,61 @@ describe('formatRelative', () => {
     const result = formatRelative(date)
     expect(result).toBe('today')
   })
+
+  it('should return yesterday for 1 day ago', () => {
+    const date = Temporal.Now.plainDateISO().subtract({ days: 1 })
+    expect(formatRelative(date)).toBe('yesterday')
+  })
+
+  it('should return tomorrow for 1 day from now', () => {
+    const date = Temporal.Now.plainDateISO().add({ days: 1 })
+    expect(formatRelative(date)).toBe('tomorrow')
+  })
+
+  it('should return days ago for 3 days ago', () => {
+    const date = Temporal.Now.plainDateISO().subtract({ days: 3 })
+    expect(formatRelative(date)).toBe('3 days ago')
+  })
+
+  it('should return days from now for 3 days from now', () => {
+    const date = Temporal.Now.plainDateISO().add({ days: 3 })
+    expect(formatRelative(date)).toBe('3 days from now')
+  })
+
+  it('should return weeks ago for 14 days ago', () => {
+    const date = Temporal.Now.plainDateISO().subtract({ days: 14 })
+    expect(formatRelative(date)).toBe('2 weeks ago')
+  })
+
+  it('should return weeks from now for 14 days from now', () => {
+    const date = Temporal.Now.plainDateISO().add({ days: 14 })
+    expect(formatRelative(date)).toBe('2 weeks from now')
+  })
+
+  it('should return months ago for 60 days ago', () => {
+    const date = Temporal.Now.plainDateISO().subtract({ days: 60 })
+    expect(formatRelative(date)).toBe('2 months ago')
+  })
+
+  it('should return months from now for 60 days from now', () => {
+    const date = Temporal.Now.plainDateISO().add({ days: 60 })
+    expect(formatRelative(date)).toBe('2 months from now')
+  })
+
+  it('should return years ago for 400 days ago', () => {
+    const date = Temporal.Now.plainDateISO().subtract({ days: 400 })
+    expect(formatRelative(date)).toBe('1 years ago')
+  })
+
+  it('should return years from now for 400 days from now', () => {
+    const date = Temporal.Now.plainDateISO().add({ days: 400 })
+    expect(formatRelative(date)).toBe('1 years from now')
+  })
+
+  it('should work with PlainDateTime input', () => {
+    const dt = Temporal.Now.plainDateTimeISO().subtract({ days: 3 })
+    expect(formatRelative(dt as any)).toBe('3 days ago')
+  })
 })
 
 describe('formatRelativeTo', () => {
@@ -218,6 +273,60 @@ describe('formatRelativeTo', () => {
     const date1 = Temporal.PlainDate.from('2023-01-01')
     const date2 = Temporal.PlainDate.from('2023-01-02')
     expect(formatRelativeTo(date1, date2)).toBe('previous day')
+  })
+
+  it('should handle next day', () => {
+    const date1 = Temporal.PlainDate.from('2023-01-02')
+    const date2 = Temporal.PlainDate.from('2023-01-01')
+    expect(formatRelativeTo(date1, date2)).toBe('next day')
+  })
+
+  it('should handle days earlier', () => {
+    const date1 = Temporal.PlainDate.from('2023-01-01')
+    const date2 = Temporal.PlainDate.from('2023-01-04')
+    expect(formatRelativeTo(date1, date2)).toBe('3 days earlier')
+  })
+
+  it('should handle days later', () => {
+    const date1 = Temporal.PlainDate.from('2023-01-04')
+    const date2 = Temporal.PlainDate.from('2023-01-01')
+    expect(formatRelativeTo(date1, date2)).toBe('3 days later')
+  })
+
+  it('should handle weeks earlier', () => {
+    const date1 = Temporal.PlainDate.from('2023-01-01')
+    const date2 = Temporal.PlainDate.from('2023-01-15')
+    expect(formatRelativeTo(date1, date2)).toBe('2 weeks earlier')
+  })
+
+  it('should handle weeks later', () => {
+    const date1 = Temporal.PlainDate.from('2023-01-15')
+    const date2 = Temporal.PlainDate.from('2023-01-01')
+    expect(formatRelativeTo(date1, date2)).toBe('2 weeks later')
+  })
+
+  it('should handle months earlier', () => {
+    const date1 = Temporal.PlainDate.from('2023-01-01')
+    const date2 = Temporal.PlainDate.from('2023-03-01')
+    expect(formatRelativeTo(date1, date2)).toBe('1 months earlier')
+  })
+
+  it('should handle months later', () => {
+    const date1 = Temporal.PlainDate.from('2023-03-01')
+    const date2 = Temporal.PlainDate.from('2023-01-01')
+    expect(formatRelativeTo(date1, date2)).toBe('1 months later')
+  })
+
+  it('should handle years earlier', () => {
+    const date1 = Temporal.PlainDate.from('2020-01-01')
+    const date2 = Temporal.PlainDate.from('2022-01-01')
+    expect(formatRelativeTo(date1, date2)).toBe('2 years earlier')
+  })
+
+  it('should handle years later', () => {
+    const date1 = Temporal.PlainDate.from('2022-01-01')
+    const date2 = Temporal.PlainDate.from('2020-01-01')
+    expect(formatRelativeTo(date1, date2)).toBe('2 years later')
   })
 })
 
@@ -785,6 +894,20 @@ describe('clampDateTime', () => {
     const result = clampDateTime(dt, min, max)
     expect(result.toString()).toBe('2023-06-15T10:00:00')
   })
+
+  it('should return min when datetime is below range', () => {
+    const dt = Temporal.PlainDateTime.from('2022-01-01T00:00:00')
+    const min = Temporal.PlainDateTime.from('2023-01-01T00:00:00')
+    const max = Temporal.PlainDateTime.from('2023-12-31T23:59:59')
+    expect(clampDateTime(dt, min, max)).toBe(min)
+  })
+
+  it('should return max when datetime is above range', () => {
+    const dt = Temporal.PlainDateTime.from('2025-01-01T00:00:00')
+    const min = Temporal.PlainDateTime.from('2023-01-01T00:00:00')
+    const max = Temporal.PlainDateTime.from('2023-12-31T23:59:59')
+    expect(clampDateTime(dt, min, max)).toBe(max)
+  })
 })
 
 describe('clampTime', () => {
@@ -793,6 +916,20 @@ describe('clampTime', () => {
     const min = Temporal.PlainTime.from('09:00:00')
     const max = Temporal.PlainTime.from('17:00:00')
     expect(clampTime(time, min, max).toString()).toBe('10:30:00')
+  })
+
+  it('should return min when time is below range', () => {
+    const time = Temporal.PlainTime.from('07:00:00')
+    const min = Temporal.PlainTime.from('09:00:00')
+    const max = Temporal.PlainTime.from('17:00:00')
+    expect(clampTime(time, min, max)).toBe(min)
+  })
+
+  it('should return max when time is above range', () => {
+    const time = Temporal.PlainTime.from('20:00:00')
+    const min = Temporal.PlainTime.from('09:00:00')
+    const max = Temporal.PlainTime.from('17:00:00')
+    expect(clampTime(time, min, max)).toBe(max)
   })
 })
 
