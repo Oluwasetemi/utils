@@ -25,7 +25,9 @@ describe('createPromiseLock', () => {
 
   it('should clear all locks', async () => {
     const lock = createPromiseLock()
-    lock.run(async () => { await sleep(50) })
+    lock.run(async () => {
+      await sleep(50)
+    })
     expect(lock.isWaiting()).toBe(true)
     lock.clear()
     expect(lock.isWaiting()).toBe(false)
@@ -53,7 +55,9 @@ describe('createControlledPromise', () => {
 
 it('sleep with callback', async () => {
   let called = false
-  await sleep(10, () => { called = true })
+  await sleep(10, () => {
+    called = true
+  })
   expect(called).toBe(true)
 })
 

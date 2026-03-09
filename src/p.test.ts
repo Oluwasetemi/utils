@@ -100,7 +100,9 @@ describe('should', () => {
 
   it('finally', async () => {
     let called = false
-    await P([1, 2]).finally(() => { called = true })
+    await P([1, 2]).finally(() => {
+      called = true
+    })
     expect(called).toBe(true)
   })
 
