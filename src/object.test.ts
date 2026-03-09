@@ -143,9 +143,9 @@ it('objectId', () => {
 
 describe('deepMergeWithArray (additional)', () => {
   it('should merge nested objects within arrays context', () => {
-    const obj1 = { a: { x: 1 }, b: [1] }
-    const obj2 = { a: { y: 2 }, b: [2] }
-    expect(deepMergeWithArray({}, obj1, obj2)).toEqual({ a: { x: 1, y: 2 }, b: [1, 2] })
+    const obj1: any = { a: { x: 1 }, b: [1] }
+    const obj2: any = { a: { y: 2 }, b: [2] }
+    expect(deepMergeWithArray({} as any, obj1, obj2)).toEqual({ a: { x: 1, y: 2 }, b: [1, 2] })
   })
 
   it('should handle empty sources', () => {

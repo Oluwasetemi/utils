@@ -95,7 +95,7 @@ describe('should', () => {
 
   it('catch', async () => {
     const instance = P([Promise.reject(new Error('oops'))])
-    await expect(instance.catch(e => `caught: ${(e as Error).message}`)).resolves.toBe('caught: oops')
+    await expect(instance.catch(e => Promise.resolve(`caught: ${(e as Error).message}`))).resolves.toBe('caught: oops')
   })
 
   it('finally', async () => {
