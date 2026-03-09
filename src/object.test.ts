@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { deepMerge, deepMergeWithArray, objectId, objectMap } from './object'
+import { clearUndefined, deepMerge, deepMergeWithArray, hasOwnProperty, isKeyOf, objectEntries, objectId, objectKeys, objectMap, objectOmit, objectPick } from './object'
 
 it('objectMap', () => {
   expect(objectMap({}, (...args) => args)).toEqual({})
@@ -78,6 +78,53 @@ describe('deepMergeWithArray', () => {
   })
 })
 
+it('isKeyOf', () => {
+  const obj = { a: 1, b: 2 }
+  expect(isKeyOf(obj, 'a')).toBe(true)
+  expect(isKeyOf(obj, 'c')).toBe(false)
+})
+
+it('objectKeys', () => {
+  expect(objectKeys({ a: 1, b: 2 })).toEqual(['a', 'b'])
+  expect(objectKeys({})).toEqual([])
+})
+
+it('objectEntries', () => {
+  expect(objectEntries({ a: 1, b: 2 })).toEqual([['a', 1], ['b', 2]])
+  expect(objectEntries({})).toEqual([])
+})
+
+it('objectPick', () => {
+  const obj = { a: 1, b: 2, c: 3 }
+  expect(objectPick(obj, ['a', 'c'])).toEqual({ a: 1, c: 3 })
+  expect(objectPick(obj, [])).toEqual({})
+  const obj2 = { a: 1, b: undefined as any }
+  expect(objectPick(obj2, ['a', 'b'], true)).toEqual({ a: 1 })
+  expect(objectPick(obj2, ['a', 'b'], false)).toEqual({ a: 1, b: undefined })
+})
+
+it('objectOmit', () => {
+  const obj = { a: 1, b: 2, c: 3 }
+  expect(objectOmit(obj, ['b'])).toEqual({ a: 1, c: 3 })
+  expect(objectOmit(obj, [])).toEqual({ a: 1, b: 2, c: 3 })
+  const obj2 = { a: 1, b: 2, c: undefined as any }
+  expect(objectOmit(obj2, ['b'], true)).toEqual({ a: 1 })
+})
+
+it('clearUndefined', () => {
+  const obj = { a: 1, b: undefined, c: 3 }
+  expect(clearUndefined(obj)).toEqual({ a: 1, c: 3 })
+  expect(clearUndefined({})).toEqual({})
+})
+
+it('hasOwnProperty', () => {
+  expect(hasOwnProperty({ a: 1 }, 'a')).toBe(true)
+  expect(hasOwnProperty({ a: 1 }, 'b')).toBe(false)
+  expect(hasOwnProperty({ a: 1 }, 'toString')).toBe(false)
+  expect(hasOwnProperty(null, 'a')).toBe(false)
+  expect(hasOwnProperty(undefined, 'a')).toBe(false)
+})
+
 it('objectId', () => {
   const foo = { a: 1, b: 2 }
   const bar = new Map()
@@ -92,4 +139,17 @@ it('objectId', () => {
   expect(objectId({})).not.toBe(objectId({}))
   expect(objectId([])).not.toBe(objectId([]))
   expect(objectId(/a/)).not.toBe(objectId(/a/))
+})
+
+describe('deepMergeWithArray (additional)', () => {
+  it('should merge nested objects within arrays context', () => {
+    const obj1: any = { a: { x: 1 }, b: [1] }
+    const obj2: any = { a: { y: 2 }, b: [2] }
+    expect(deepMergeWithArray({} as any, obj1, obj2)).toEqual({ a: { x: 1, y: 2 }, b: [1, 2] })
+  })
+
+  it('should handle empty sources', () => {
+    const obj = { a: 1 }
+    expect(deepMergeWithArray(obj)).toEqual({ a: 1 })
+  })
 })
